@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sortable</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="assets/css/sortable.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .test-table th, .test-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .test-table th { background-color: #f2f2f2; }
+        .sort-handle { cursor: move; text-align: center; color: #6c757d; }
+        .sort-handle:hover { color: #4e73df; }
+        .test-toggle { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Test Drag & Drop Functionality</h1>
+    
+    <div class="test-toggle">
+        <label>
+            <input type="checkbox" id="sortModeToggle" onchange="toggleSortMode()">
+            Mode Pengurutan (Drag & Drop)
+        </label>
+    </div>
+    
+    <table class="test-table">
+        <thead>
+            <tr>
+                <th width="50">#</th>
+                <th width="50" id="sortHandleHeader" style="display: none;">
+                    <i class="fas fa-grip-vertical"></i>
+                </th>
+                <th>Nama</th>
+                <th>Deskripsi</th>
+            </tr>
+        </thead>
+        <tbody id="testTableBody">
+            <tr data-layanan-id="1">
+                <td>1</td>
+                <td class="sort-handle" style="display: none;">
+                    <i class="fas fa-grip-vertical">⋮⋮</i>
+                </td>
+                <td>Item 1</td>
+                <td>Deskripsi item 1</td>
+            </tr>
+            <tr data-layanan-id="2">
+                <td>2</td>
+                <td class="sort-handle" style="display: none;">
+                    <i class="fas fa-grip-vertical">⋮⋮</i>
+                </td>
+                <td>Item 2</td>
+                <td>Deskripsi item 2</td>
+            </tr>
+            <tr data-layanan-id="3">
+                <td>3</td>
+                <td class="sort-handle" style="display: none;">
+                    <i class="fas fa-grip-vertical">⋮⋮</i>
+                </td>
+                <td>Item 3</td>
+                <td>Deskripsi item 3</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <button id="saveSortBtn" onclick="saveSortOrder()" style="display: none; padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Simpan Urutan
+    </button>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    
+    <script>
+        function toggleSortMode() {
+            const isSortMode = $('#sortModeToggle').is(':checked');
+            const sortHandleHeader = $('#sortHandleHeader');
+            const saveSortBtn = $('#saveSortBtn');
+            
+            if (isSortMode) {
+                sortHandleHeader.show();
+                saveSortBtn.show();
+                enableDragAndDrop();
+                $('#result').html('<strong>Mode pengurutan aktif!</strong> Coba drag & drop baris tabel.');
+            } else {
+                sortHandleHeader.show();
+                saveSortBtn.hide();
+                disableDragAndDrop();
+                $('#result').html('<strong>Mode pengurutan dinonaktifkan.</strong>');
+            }
+        }
+
+        function enableDragAndDrop() {
+            const tbody = $('#testTableBody');
+            tbody.sortable({
+                handle: '.sort-handle',
+                axis: 'y',
+                cursor: 'move',
+                opacity: 0.8,
+                tolerance: 'pointer',
+                update: function(event, ui) {
+                    updateRowNumbers();
+                    $('#saveSortBtn').style.background = '#ffc107';
+                    $('#saveSortBtn').innerHTML = 'Ada Perubahan - Simpan!';
+                    $('#result').html('<strong>Urutan berubah!</strong> Klik "Simpan Urutan" untuk menyimpan.');
+                }
+            });
+        }
+
+        function disableDragAndDrop() {
+            const tbody = $('#testTableBody');
+            tbody.sortable('destroy');
+        }
+
+        function updateRowNumbers() {
+            $('#testTableBody tr').each(function(index) {
+                $(this).find('td:first').text(index + 1);
+            });
+        }
+
+        function saveSortOrder() {
+            const rows = $('#testTableBody tr');
+            const layananIds = [];
+            
+            rows.each(function() {
+                const layananId = $(this).data('layanan-id');
+                if (layananId) {
+                    layananIds.push(layananId);
+                }
+            });
+
+            $('#result').html('<strong>Urutan tersimpan!</strong> ID: ' + layananIds.join(', '));
+            $('#saveSortBtn').style.background = '#28a745';
+            $('#saveSortBtn').innerHTML = 'Simpan Urutan';
+        }
+
+        // Test jQuery UI loading
+        $(document).ready(function() {
+            if (typeof $.ui !== 'undefined') {
+                $('#result').html('<strong>jQuery UI berhasil dimuat!</strong>');
+            } else {
+                $('#result').html('<strong style="color: red;">jQuery UI gagal dimuat!</strong>');
+            }
+        });
+    </script>
+</body>
+</html>

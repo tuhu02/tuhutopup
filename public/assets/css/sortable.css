@@ -1,0 +1,217 @@
+/* Custom CSS untuk Drag and Drop Sorting */
+
+/* Styling dasar untuk tabel yang bisa di-sort */
+.sortable-enabled tbody tr {
+    transition: all 0.2s ease;
+    cursor: default;
+    position: relative;
+}
+
+/* Hover effect saat mode sorting aktif */
+.sortable-enabled tbody tr.sortable-hover {
+    background-color: #f8f9fa !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+/* Efek saat baris sedang di-drag */
+.sortable-enabled tbody tr.dragging {
+    opacity: 0.8;
+    background-color: #e3f2fd !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Styling untuk helper saat drag */
+.sortable-enabled tbody tr.dragging-row {
+    background-color: #e3f2fd !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    border: 2px solid #2196f3;
+    border-radius: 8px;
+    transform: rotate(2deg);
+}
+
+/* Placeholder saat drag */
+.sortable-enabled .drag-placeholder {
+    background-color: #e8f5e8 !important;
+    border: 2px dashed #4caf50;
+    height: 60px;
+    opacity: 0.7;
+}
+
+/* Styling untuk sort handle */
+.sort-handle {
+    cursor: move !important;
+    background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+    border-radius: 4px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.sort-handle:hover {
+    background: linear-gradient(45deg, #e3f2fd, #bbdefb);
+    transform: scale(1.05);
+}
+
+.sort-handle i {
+    color: #666;
+    font-size: 14px;
+}
+
+.sort-handle:hover i {
+    color: #2196f3;
+}
+
+/* Visual indicator untuk baris yang bisa di-drag */
+.sortable-enabled tbody tr::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: transparent;
+    transition: background 0.2s ease;
+    z-index: 1;
+}
+
+.sortable-enabled tbody tr.sortable-hover::before {
+    background: #2196f3;
+}
+
+.sortable-enabled tbody tr.dragging::before {
+    background: #1976d2;
+    width: 6px;
+}
+
+/* Styling untuk mode sorting yang siap */
+.sortable-ready tbody tr {
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sortable-ready tbody tr:hover {
+    border-left-color: #2196f3;
+    background-color: #f8f9fa;
+    transform: translateX(2px);
+}
+
+.sortable-ready .sort-handle {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Efek highlight untuk baris yang dipindahkan */
+.highlight-move {
+    animation: highlightMove 1s ease-in-out;
+}
+
+@keyframes highlightMove {
+    0% { background-color: #e8f5e8; }
+    50% { background-color: #c8e6c9; }
+    100% { background-color: transparent; }
+}
+
+/* Efek untuk baris yang diupdate */
+.updated-row {
+    animation: updatedRow 1.5s ease-in-out;
+}
+
+@keyframes updatedRow {
+    0% { background-color: #fff3cd; }
+    50% { background-color: #ffeaa7; }
+    100% { background-color: transparent; }
+}
+
+/* Efek untuk baris yang berhasil disimpan */
+.saved-success {
+    animation: savedSuccess 2s ease-in-out;
+}
+
+@keyframes savedSuccess {
+    0% { background-color: #d4edda; }
+    50% { background-color: #c3e6cb; }
+    100% { background-color: transparent; }
+}
+
+/* Styling untuk instruksi */
+#sortingInstructions {
+    border-left: 4px solid #2196f3;
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+}
+
+#sortingInstructions .btn-close {
+    opacity: 0.7;
+}
+
+#sortingInstructions .btn-close:hover {
+    opacity: 1;
+}
+
+/* Styling untuk notifikasi sukses */
+.success-notification {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 8px;
+}
+
+.success-notification .btn-close {
+    opacity: 0.7;
+}
+
+.success-notification .btn-close:hover {
+    opacity: 1;
+}
+
+/* Responsive design untuk mobile */
+@media (max-width: 768px) {
+    .sort-handle {
+        padding: 6px;
+    }
+    
+    .sort-handle i {
+        font-size: 12px;
+    }
+    
+    .sortable-enabled tbody tr.sortable-hover {
+        transform: none;
+    }
+    
+    .sortable-ready tbody tr:hover {
+        transform: none;
+    }
+}
+
+/* Efek untuk menarik perhatian pada sort handle */
+.attention-grabber {
+    animation: attentionGrabber 3s ease-in-out;
+}
+
+@keyframes attentionGrabber {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+    }
+    25% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+    }
+    50% { 
+        transform: scale(1.05);
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+    }
+    75% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+    }
+}
