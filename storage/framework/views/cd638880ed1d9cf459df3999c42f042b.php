@@ -173,9 +173,6 @@
                             <button type="button" class="btn btn-info me-2" id="previewBtn">
                                 <i class="fas fa-eye me-2"></i>Preview Data
                             </button>
-                            <button type="button" class="btn btn-warning me-2" id="testBtn">
-                                <i class="fas fa-bug me-2"></i>Test AJAX
-                            </button>
                             <button type="submit" class="btn btn-primary" id="importBtn">
                                 <i class="fas fa-upload me-2"></i>Import Layanan
                             </button>
@@ -574,17 +571,6 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <!-- Debug buttons -->
-                        <div class="mt-2">
-                            <button type="button" class="btn btn-sm btn-outline-info" onclick="debugSortHandles()">
-                                Debug: Hitung Sort Handles
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="forceShowHandles()">
-                                Debug: Force Show Handles
-                            </button>
-                            <button type="button" class="btn btn-sm btn-outline-success" onclick="resetToggleState()">
-                                Debug: Reset Toggle
-                            </button>
-                        </div>
                     </div>
 
                     <div class="table-responsive">
@@ -803,22 +789,6 @@ unset($__errorArgs, $__bag); ?>
                 .finally(() => {
                     document.getElementById('previewBtn').disabled = false;
                     document.getElementById('previewBtn').innerHTML = '<i class="fas fa-eye me-2"></i>Preview Data';
-                });
-        });
-
-        // Test AJAX button
-        document.getElementById('testBtn').addEventListener('click', function () {
-            console.log('Testing AJAX...');
-
-            fetch('<?php echo e(route("layanan.test")); ?>')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Test response:', data);
-                    alert('Test berhasil: ' + data.message);
-                })
-                .catch(error => {
-                    console.error('Test error:', error);
-                    alert('Test gagal: ' + error.message);
                 });
         });
 
@@ -1198,49 +1168,6 @@ unset($__errorArgs, $__bag); ?>
                 }
                 return item;
             });
-        }
-
-        // Debug functions
-        function debugSortHandles() {
-            const handles = $('.sort-handle');
-            const visibleHandles = handles.filter(':visible');
-            const hiddenHandles = handles.filter(':hidden');
-
-            console.log('=== DEBUG SORT HANDLES ===');
-            console.log('Total sort handles:', handles.length);
-            console.log('Visible handles:', visibleHandles.length);
-            console.log('Hidden handles:', hiddenHandles.length);
-            console.log('Toggle state:', $('#sortModeToggle').is(':checked'));
-            console.log('Header visibility:', $('#sortHandleHeader').is(':visible'));
-            console.log('Save button visibility:', $('#saveSortBtn').is(':visible'));
-
-            // Show info in page
-            alert(`Debug Info:\nTotal handles: ${handles.length}\nVisible: ${visibleHandles.length}\nHidden: ${hiddenHandles.length}\nToggle: ${$('#sortModeToggle').is(':checked')}`);
-        }
-
-        function forceShowHandles() {
-            // Multiple methods to force show handles
-            $('.sort-handle').show().addClass('force-show');
-            $('.sort-handle').css('display', 'table-cell');
-            $('#sortHandleHeader').show();
-
-            console.log('Force show all handles');
-            console.log('Handles after force show:', $('.sort-handle:visible').length);
-
-            alert(`All handles forced to show!\nVisible handles: ${$('.sort-handle:visible').length}`);
-        }
-
-        function resetToggleState() {
-            // Reset toggle to unchecked
-            $('#sortModeToggle').prop('checked', false);
-
-            // Hide all handles
-            $('.sort-handle').hide().removeClass('force-show');
-            $('.sortHandleHeader').hide();
-            $('#saveSortBtn').hide();
-
-            console.log('Toggle state reset to false');
-            alert('Toggle state reset to false. All handles hidden.');
         }
     </script>
 

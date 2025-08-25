@@ -1,7 +1,8 @@
 <?php $__env->startSection('head'); ?>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="<?php echo e(asset('assets/css/kategori-sortable.css')); ?>">
-    
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -140,6 +141,7 @@ unset($__errorArgs, $__bag); ?>
                 <div class="mb-3 row">
                     <label class="col-lg-2 col-form-label" for="example-fileinput">Deskripsi Game</label>
                     <div class="col-lg-10">
+                        <div id="editorDeskripsiGame"><?php echo old('deskripsi_game'); ?></div>
                         <textarea class="form-control <?php $__errorArgs = ['deskripsi_game'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -148,7 +150,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                            name="deskripsi_game"><?php echo e(old('deskripsi_game')); ?></textarea>
+                            name="deskripsi_game" id="inputDeskripsiGame"><?php echo e(old('deskripsi_game')); ?></textarea>
                         <?php $__errorArgs = ['deskripsi_game'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -438,14 +440,18 @@ unset($__errorArgs, $__bag); ?>
                 autoWidth: false,
                 pageLength: 10
             });
-
-            // Debug: Log jQuery UI availability
-            if (typeof $.ui !== 'undefined') {
-                console.log('✅ jQuery UI loaded successfully');
-            } else {
-                console.log('❌ jQuery UI not loaded');
-            }
         });
+
+        var quillGame = new Quill('#editorDeskripsiGame', {
+            theme: 'snow',
+            placeholder: 'Tulis deskripsi game...'
+        });
+
+        // Saat submit form, ambil isi Quill lalu masukkan ke input hidden
+        document.querySelector('form').onsubmit = function() {
+            document.querySelector('#inputDeskripsiGame').value = quillGame.root.innerHTML;
+            document.querySelector('#inputDeskripsiField').value = quillField.root.innerHTML;
+        };
 
         // Fungsi untuk toggle mode pengurutan
         function toggleSortMode() {
