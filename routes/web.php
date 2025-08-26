@@ -136,15 +136,19 @@ Route::middleware(['auth', 'check.role'])->group(function () {
     Route::get('/admin/berita/hapus/{id}', [Berita::class, 'delete'])->name('admin.berita.delete');
 
     //Kategori
-    Route::get('/kategori', [KategoriController::class, 'create'])->name('kategori');
-    Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.post');
-    Route::get('/kategori/hapus/{id}', [KategoriController::class, 'delete'])->name('kategori.delete');
-    Route::get('/kategori-status/{id}/{status}', [KategoriController::class, 'update'])->name('kategori.update');
-    Route::post('/kategori/update', [KategoriController::class, 'patch'])->name('kategori.detail.update');
-    Route::post('/kategori/sort', [KategoriController::class, 'updateSortOrder'])->name('kategori.sort');
+Route::get('/kategori', [KategoriController::class, 'create'])->name('kategori');
+Route::post('/kategori', [KategoriController::class, 'store'])->name('kategori.post');
+Route::get('/kategori/hapus/{id}', [KategoriController::class, 'delete'])->name('kategori.delete');
+Route::get('/kategori-status/{id}/{status}', [KategoriController::class, 'update'])->name('kategori.update');
+Route::post('/kategori/update', [KategoriController::class, 'patch'])->name('kategori.detail.update');
+Route::post('/kategori/sort', [KategoriController::class, 'updateSortOrder'])->name('kategori.sort');
 
-    Route::get('/kategori/{id}/detail', [KategoriController::class, 'detail'])->name('kategori.detail');
-    Route::post('/kategori/{id}/detail', [KategoriController::class, 'patch'])->name('kategori.detail.update');
+Route::get('/kategori/{id}/detail', [KategoriController::class, 'detail'])->name('kategori.detail');
+Route::post('/kategori/{id}/detail', [KategoriController::class, 'patch'])->name('kategori.detail.update');
+
+// Route baru untuk edit kategori
+Route::get('/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
+Route::post('/kategori/{id}/edit', [KategoriController::class, 'updateKategori'])->name('kategori.update.kategori');
 
     //Layanan
     Route::get('/layanan', [LayananController::class, 'create'])->name('layanan');

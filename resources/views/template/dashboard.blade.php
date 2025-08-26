@@ -162,7 +162,126 @@
     .order-card .order-details small {
         color: var(--text-muted);
     }
+
+    .stat-icon {
+        color: var(--accent-gold);
+    }
+
+    .profile-info-item label {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-info-item p {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0;
+    }
+
+    .chart-container {
+        position: relative;
+        margin: auto;
+    }
+
+    .tab-content {
+        padding-top: 1rem;
+    }
+
+    .nav-tabs .nav-link {
+        border-radius: 8px 8px 0 0;
+        margin-right: 0.5rem;
+    }
+
+    .nav-tabs .nav-link.active {
+        background-color: var(--bg-surface);
+        border-color: var(--border-color);
+        border-bottom-color: var(--bg-surface);
+    }
 </style>
+@endsection
+
+@section('custom_script')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inisialisasi Chart.js
+    const ctx = document.getElementById('activityChart').getContext('2d');
+    
+    const chartData = @json($chartData);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: chartData.map(item => item.date),
+            datasets: [{
+                label: 'Jumlah Pesanan',
+                data: chartData.map(item => item.count),
+                borderColor: '#f59e0b',
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#f59e0b',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        color: '#6b7280'
+                    },
+                    grid: {
+                        color: '#e5e7eb'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#6b7280'
+                    },
+                    grid: {
+                        color: '#e5e7eb'
+                    }
+                }
+            },
+            elements: {
+                point: {
+                    hoverRadius: 8
+                }
+            }
+        }
+    });
+
+    // Tab functionality
+    const triggerTabList = document.querySelectorAll('#dashboardTabs button');
+    triggerTabList.forEach(triggerEl => {
+        const tabTrigger = new bootstrap.Tab(triggerEl);
+        
+        triggerEl.addEventListener('click', event => {
+            event.preventDefault();
+            tabTrigger.show();
+        });
+    });
+
+    // Auto-refresh data setiap 30 detik
+    setInterval(function() {
+        // Refresh halaman untuk mendapatkan data terbaru
+        // Atau bisa menggunakan AJAX untuk refresh data tertentu saja
+        console.log('Dashboard data refreshed');
+    }, 30000);
+});
+</script>
 @endsection
 
 @section('content')
@@ -186,37 +305,177 @@
             </div>
 
             {{-- Menu Navigasi --}}
-            <ul class="nav nav-tabs">
-                <li class="nav-item"><a class="nav-link active" href="#">Akun Saya</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Pesanan</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Isi Saldo</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Membership</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Log Saldo</a></li>
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                        <i class="fas fa-chart-pie me-2"></i>Overview
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders" type="button" role="tab">
+                        <i class="fas fa-shopping-cart me-2"></i>Pesanan
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                        <i class="fas fa-user me-2"></i>Profil
+                    </button>
+                </li>
             </ul>
 
             {{-- Konten Sesuai Tab yang Aktif --}}
-            <div class="content-section">
-                
-                {{-- Kartu Saldo --}}
-                <div class="info-card">
-                    <h5>Saldo Saya</h5>
-                    <p class="balance-amount mb-0">Rp {{ number_format(Auth::user()->balance, 0, ',', '.') }},-</p>
-                </div>
-                
-                {{-- Kartu Pesanan Terakhir --}}
-                <div class="info-card">
-                    <h5>5 Pesanan Terakhir</h5>
-                    <div class="order-card d-flex justify-content-between align-items-center">
-                        <div class="order-details">
-                            <span class="badge bg-warning text-dark order-id">KNOCK1755500427RC7</span>
-                            <p>210 Diamonds - Free Fire</p>
-                            <small>Rp 27.805</small>
+            <div class="tab-content" id="dashboardTabContent">
+                {{-- Tab Overview --}}
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="content-section">
+                        {{-- Statistik Cards --}}
+                        <div class="row mb-4">
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <div class="info-card text-center">
+                                    <div class="stat-icon mb-2">
+                                        <i class="fas fa-shopping-bag text-primary" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-1">Total Pesanan</h5>
+                                    <p class="balance-amount mb-0">{{ $totalOrders }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <div class="info-card text-center">
+                                    <div class="stat-icon mb-2">
+                                        <i class="fas fa-check-circle text-success" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-1">Berhasil</h5>
+                                    <p class="balance-amount mb-0">{{ $successOrders }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <div class="info-card text-center">
+                                    <div class="stat-icon mb-2">
+                                        <i class="fas fa-clock text-warning" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-1">Pending</h5>
+                                    <p class="balance-amount mb-0">{{ $pendingOrders }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-6 mb-3">
+                                <div class="info-card text-center">
+                                    <div class="stat-icon mb-2">
+                                        <i class="fas fa-times-circle text-danger" style="font-size: 2rem;"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-1">Gagal</h5>
+                                    <p class="balance-amount mb-0">{{ $failedOrders }}</p>
+                                </div>
+                            </div>
                         </div>
-                        <span class="badge bg-success">Success</span>
+
+                        {{-- Kartu Saldo dan Total Pengeluaran --}}
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="info-card">
+                                    <h5><i class="fas fa-wallet me-2"></i>Saldo Saya</h5>
+                                    <p class="balance-amount mb-0">Rp {{ number_format($user->balance, 0, ',', '.') }},-</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="info-card">
+                                    <h5><i class="fas fa-money-bill-wave me-2"></i>Total Pengeluaran</h5>
+                                    <p class="balance-amount mb-0">Rp {{ number_format($totalSpent, 0, ',', '.') }},-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Chart Aktivitas 7 Hari Terakhir --}}
+                        <div class="info-card">
+                            <h5><i class="fas fa-chart-line me-2"></i>Aktivitas 7 Hari Terakhir</h5>
+                            <div class="chart-container" style="height: 200px;">
+                                <canvas id="activityChart"></canvas>
+                            </div>
+                        </div>
                     </div>
-                     {{-- Tambahkan order-card lainnya di sini jika perlu --}}
                 </div>
 
+                {{-- Tab Pesanan --}}
+                <div class="tab-pane fade" id="orders" role="tabpanel">
+                    <div class="content-section">
+                        <div class="info-card">
+                            <h5><i class="fas fa-list me-2"></i>Pesanan Terakhir</h5>
+                            @if($recentOrders->count() > 0)
+                                @foreach($recentOrders as $order)
+                                    <div class="order-card d-flex justify-content-between align-items-center">
+                                        <div class="order-details">
+                                            <span class="badge bg-warning text-dark order-id">{{ $order->order_id }}</span>
+                                            <p class="mb-1">{{ $order->layanan }}</p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-user me-1"></i>{{ $order->nickname }}
+                                                @if($order->zone)
+                                                    <span class="ms-2"><i class="fas fa-server me-1"></i>{{ $order->zone }}</span>
+                                                @endif
+                                            </small>
+                                            <div class="mt-1">
+                                                <small class="text-muted">Rp {{ number_format($order->harga, 0, ',', '.') }},-</small>
+                                                <small class="text-muted ms-2">{{ $order->created_at->format('d M Y H:i') }}</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            @if($order->status == 'success')
+                                                <span class="badge bg-success">Success</span>
+                                            @elseif($order->status == 'pending')
+                                                <span class="badge bg-warning">Pending</span>
+                                            @elseif($order->status == 'failed')
+                                                <span class="badge bg-danger">Failed</span>
+                                            @else
+                                                <span class="badge bg-secondary">{{ ucfirst($order->status) }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-center py-4">
+                                    <i class="fas fa-shopping-cart text-muted" style="font-size: 3rem;"></i>
+                                    <p class="text-muted mt-2">Belum ada pesanan</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tab Profil --}}
+                <div class="tab-pane fade" id="profile" role="tabpanel">
+                    <div class="content-section">
+                        <div class="info-card">
+                            <h5><i class="fas fa-user-circle me-2"></i>Informasi Profil</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small">Nama Lengkap</label>
+                                        <p class="mb-2">{{ $user->name }}</p>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small">Username</label>
+                                        <p class="mb-2">{{ $user->username }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small">Role</label>
+                                        <p class="mb-2">
+                                            <span class="badge-gold-member">{{ ucfirst($user->role) }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <label class="text-muted small">No. WhatsApp</label>
+                                        <p class="mb-2">{{ $user->no_wa ?? 'Belum diisi' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <a href="{{ url('/user/edit/profile') }}" class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>Edit Profil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

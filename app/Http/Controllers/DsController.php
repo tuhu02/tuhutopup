@@ -11,14 +11,60 @@ class DsController extends Controller
 {
     public function dashboard()
     {
-        // return view('components.dashboarduser',[
-        //     'data' => \App\Models\Pembelian::where('username', Auth::user()->username)->get(),
-        //     'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-        //     'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
-        // ]);
+        $user = Auth::user();
         
-        return view('template.dashboard',[
-            'data' => \App\Models\Pembelian::where('username', Auth::user()->username)->get(),
+        // Ambil data pembelian user
+        $pembelians = \App\Models\Pembelian::where('username', $user->username)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+        
+        // Hitung statistik
+        $totalOrders = \App\Models\Pembelian::where('username', $user->username)->count();
+        $successOrders = \App\Models\Pembelian::where('username', $user->username)
+            ->where('status', 'success')
+            ->count();
+        $pendingOrders = \App\Models\Pembelian::where('username', $user->username)
+            ->where('status', 'pending')
+            ->count();
+        $failedOrders = \App\Models\Pembelian::where('username', $user->username)
+            ->where('status', 'failed')
+            ->count();
+        
+        // Hitung total pengeluaran
+        $totalSpent = \App\Models\Pembelian::where('username', $user->username)
+            ->where('status', 'success')
+            ->sum('harga');
+        
+        // Ambil pesanan terakhir (5 terakhir)
+        $recentOrders = \App\Models\Pembelian::where('username', $user->username)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        // Ambil data untuk chart (7 hari terakhir)
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $count = \App\Models\Pembelian::where('username', $user->username)
+                ->whereDate('created_at', $date)
+                ->count();
+            $chartData[] = [
+                'date' => now()->subDays($i)->format('d M'),
+                'count' => $count
+            ];
+        }
+        
+        return view('template.dashboard', [
+            'user' => $user,
+            'pembelians' => $pembelians,
+            'totalOrders' => $totalOrders,
+            'successOrders' => $successOrders,
+            'pendingOrders' => $pendingOrders,
+            'failedOrders' => $failedOrders,
+            'totalSpent' => $totalSpent,
+            'recentOrders' => $recentOrders,
+            'chartData' => $chartData,
             'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
             'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
         ]);

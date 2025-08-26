@@ -217,6 +217,55 @@ class KategoriController extends Controller
         return back()->with('success', 'Berhasil update kategori');
     }
 
+    public function edit($id)
+    {
+        $data = Kategori::where('id', $id)->first();
+        return view('components.admin.kategori-edit', compact('data'));
+    }
+
+    public function updateKategori(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required',
+            'sub_nama' => 'required',
+            'brand' => 'required',
+            'kode' => 'required|unique:kategoris,kode,' . $id,
+            'serverOption' => 'required',
+            'tipe' => 'required',
+            'is_popular' => 'nullable|boolean',
+        ]);
+
+        $updateData = [
+            'nama' => $request->nama,
+            'sub_nama' => $request->sub_nama,
+            'brand' => $request->brand,
+            'kode' => $request->kode,
+            'server_id' => $request->serverOption == 'ya' ? 1 : 0,
+            'tipe' => $request->tipe,
+            'is_popular' => $request->is_popular ? 1 : 0,
+            'deskripsi_game' => str_replace("\r\n", "<br>", $request->deskripsi_game),
+            'deskripsi_field' => str_replace("\r\n", "<br>", $request->deskripsi_field)
+        ];
+
+        if ($request->file('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $folder = 'assets/thumbnail';
+            $file->move($folder, $file->getClientOriginalName());
+            $updateData['thumbnail'] = "/" . $folder . "/" . $file->getClientOriginalName();
+        }
+
+        if ($request->file('banner')) {
+            $file2 = $request->file('banner');
+            $folder2 = 'assets/banner_game';
+            $file2->move($folder2, $file2->getClientOriginalName());
+            $updateData['banner'] = "/" . $folder2 . "/" . $file2->getClientOriginalName();
+        }
+
+        Kategori::where('id', $id)->update($updateData);
+
+        return redirect()->route('kategori')->with('success', 'Berhasil update kategori');
+    }
+
     public function updateSortOrder(Request $request)
     {
         try {

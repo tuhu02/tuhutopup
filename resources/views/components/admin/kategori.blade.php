@@ -281,12 +281,15 @@
                                         <td>{{ $datas->banner }}</td>
                                         <td>{{ $datas->is_popular }}</td>
                                         <td>
-                                            <a href="javascript:;"
-                                                onclick="modal('{{ $datas->nama }}', '{{ route('kategori.detail', [$datas->id]) }}')"
-                                                class="btn-sm btn-info mb-3">Edit</a>
+                                            <a href="{{ route('kategori.edit', $datas->id) }}"
+                                                class="btn-sm btn-info mb-3">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
                                             <br>
                                             <br>
-                                            <a class="btn-sm btn-danger mt-2" href="/kategori/hapus/{{ $datas->id }}">Hapus</a>
+                                            <a class="btn-sm btn-danger mt-2" href="/kategori/hapus/{{ $datas->id }}">
+                                                <i class="fas fa-trash"></i> Hapus
+                                            </a>
                                         </td>
                                         <td>{{ $datas->created_at }}</td>
                                     </tr>
@@ -541,39 +544,7 @@
             }, 3000);
         }
 
-        function modal(name, link) {
-            var myModal = new bootstrap.Modal($('#modal-detail'))
-            $.ajax({
-                type: "GET",
-                url: link,
-                beforeSend: function () {
-                    $('#modal-detail-title').html(name);
-                    $('#modal-detail-body').html('Loading...');
-                },
-                success: function (result) {
-                    $('#modal-detail-title').html(name);
-                    $('#modal-detail-body').html(result);
-                },
-                error: function () {
-                    $('#modal-detail-title').html(name);
-                    $('#modal-detail-body').html('There is an error...');
-                }
-            });
-            myModal.show();
-        }
+        // Fungsi modal sudah tidak digunakan lagi karena edit kategori sekarang menggunakan halaman terpisah
     </script>
-
-
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="modal-detail" style="border-radius:7%">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal-detail-title"></h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="modal-detail-body"></div>
-            </div>
-        </div>
-    </div>
 
 @endsection
