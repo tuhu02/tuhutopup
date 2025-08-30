@@ -171,64 +171,63 @@
 
         .bg-payment {
             background: #E6E7EB;
-        }
-
-        .method-list.active {
-            border-color: #3b3b3b !important;
-        }
-
-        .method-list.active:before {
-            background: #3b3b3b !important;
-        }
-
-        .btn-order {
-            display: inline-block;
-            border: 0;
-            outline: 0;
-            padding: 12px 16px;
-            line-height: 1.4;
-            cursor: pointer;
-            /* Important part */
-            position: relative;
-            transition: padding-right .3s ease-out;
-
-        }
-
-        .btn-order.loading {
-            padding-right: 40px;
-        }
-
-        .btn-order.loading:after {
-            content: "";
-            position: absolute;
-            border-radius: 100%;
-            right: 10px;
-            top: 35%;
-            width: 0px;
-            height: 0px;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-left-color: #FFF;
-            border-top-color: #FFF;
-            animation: spin .6s infinite linear, grow .3s forwards ease-out;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(359deg);
             }
-        }
 
-        @keyframes grow {
-            to {
-                width: 16px;
-                height: 16px;
+            .method-list.active {
+                border-color: #3b3b3b !important;
             }
-        }
 
-        .shadow-form {
-            box-shadow: 0 4px 80px hsla(0, 0%, 77%, .13), 0 1.6711px 33.4221px hsla(0, 0%, 77%, .093), 0 0.893452px 17.869px hsla(0, 0%, 77%, .077), 0 0.500862px 10.0172px hsla(0, 0%, 77%, .065), 0 0.266004px 5.32008px hsla(0, 0%, 77%, .053), 0 0.11069px 2.21381px hsla(0, 0%, 77%, .037);
-        }
-    </style>
+            .method-list.active:before {
+                background: #3b3b3b !important;
+            }
+
+            .btn-order {
+                display: inline-block;
+                border: 0;
+                outline: 0;
+                padding: 12px 16px;
+                line-height: 1.4;
+                cursor: pointer;
+                /* Important part */
+                position: relative;
+                transition: padding-right .3s ease-out;
+            }
+
+            .btn-order.loading {
+                padding-right: 40px;
+            }
+
+            .btn-order.loading:after {
+                content: "";
+                position: absolute;
+                border-radius: 100%;
+                right: 10px;
+                top: 35%;
+                width: 0px;
+                height: 0px;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+                border-left-color: #FFF;
+                border-top-color: #FFF;
+                animation: spin .6s infinite linear, grow .3s forwards ease-out;
+            }
+
+            @keyframes spin {
+                to {
+                    transform: rotate(359deg);
+                }
+            }
+
+            @keyframes grow {
+                to {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .shadow-form {
+                box-shadow: 0 4px 80px hsla(0, 0%, 77%, .13), 0 1.6711px 33.4221px hsla(0, 0%, 77%, .093), 0 0.893452px 17.869px hsla(0, 0%, 77%, .077), 0 0.500862px 10.0172px hsla(0, 0%, 77%, .065), 0 0.266004px 5.32008px hsla(0, 0%, 77%, .053), 0 0.11069px 2.21381px hsla(0, 0%, 77%, .037);
+            }
+        </style>
 
 @endsection
 
@@ -570,8 +569,8 @@
 
                                     @else
 
-                        
-                                        @if($kategori->brand === 'JASA JOKI' )
+
+                                        @if($kategori->brand === 'JASA JOKI')
 
 
                                             <div class="row">

@@ -12,13 +12,13 @@ class DsController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        
+
         // Ambil data pembelian user
         $pembelians = \App\Models\Pembelian::where('username', $user->username)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
-        
+
         // Hitung statistik
         $totalOrders = \App\Models\Pembelian::where('username', $user->username)->count();
         $successOrders = \App\Models\Pembelian::where('username', $user->username)
@@ -30,18 +30,18 @@ class DsController extends Controller
         $failedOrders = \App\Models\Pembelian::where('username', $user->username)
             ->where('status', 'failed')
             ->count();
-        
+
         // Hitung total pengeluaran
         $totalSpent = \App\Models\Pembelian::where('username', $user->username)
             ->where('status', 'success')
             ->sum('harga');
-        
+
         // Ambil pesanan terakhir (5 terakhir)
         $recentOrders = \App\Models\Pembelian::where('username', $user->username)
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
-        
+
         // Ambil data untuk chart (7 hari terakhir)
         $chartData = [];
         for ($i = 6; $i >= 0; $i--) {
@@ -54,7 +54,7 @@ class DsController extends Controller
                 'count' => $count
             ];
         }
-        
+
         return view('template.dashboard', [
             'user' => $user,
             'pembelians' => $pembelians,
@@ -69,27 +69,27 @@ class DsController extends Controller
             'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
         ]);
     }
-    
+
     public function editProfile()
     {
         // return view('components.editprofile',[
         // 'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
         // 'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
         // ]);
-        
-         return view('template.profile',[
-        'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
-        'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
+
+        return view('template.profile', [
+            'logoheader' => Berita::where('tipe', 'logoheader')->latest()->first(),
+            'logofooter' => Berita::where('tipe', 'logofooter')->latest()->first(),
         ]);
     }
-    
+
     public function saveEditProfile(Request $request)
     {
         $request->validate([
             'name' => 'required',
-            'username' => 'required|min:3|max:255|unique:users,username,'.Auth()->user()->id,
+            'username' => 'required|min:3|max:255|unique:users,username,' . Auth()->user()->id,
             'password' => 'nullable|min:6|max:255',
-            'no_wa' => 'required|numeric|unique:users,no_wa,'.Auth()->user()->id
+            'no_wa' => 'required|numeric|unique:users,no_wa,' . Auth()->user()->id
         ], [
             'nama.required' => 'Harap isi kolom nama!',
             'username.required' => 'Harap isi kolom username!',
@@ -103,24 +103,24 @@ class DsController extends Controller
             'no_wa.unique' => 'No whatsapp telah digunakan'
         ]);
 
-        
+
         $data = [
-          'name' => $request->name,
-          'username' => $request->username,
-          'no_wa' => $request->no_wa
+            'name' => $request->name,
+            'username' => $request->username,
+            'no_wa' => $request->no_wa
         ];
-        
-        if(!empty($request->password)){
-            
+
+        if (!empty($request->password)) {
+
             $data['password'] = bcrypt($request->password);
-            
+
         }
-        
-        \App\Models\User::where('id',Auth()->user()->id)->update($data);
-        
+
+        \App\Models\User::where('id', Auth()->user()->id)->update($data);
+
         return redirect()->back()->with('success', 'Berhasil mengedit profile!');
 
     }
-    
-    
+
+
 }
